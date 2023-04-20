@@ -23,7 +23,7 @@ class ProjectSeeder extends Seeder
 
             $pro->title = $faker->unique()->sentence($faker->numberBetween(3, 10));
             $pro->description = $faker->sentence($faker->numberBetween(20, 100));
-            $pro->website_link = 'https://boolean.careers/?utm_source=google&utm_campaign=it_search_brand&utm_medium=cpc&utm_content=boolean&utm_term=boolean&gclid=Cj0KCQjwxYOiBhC9ARIsANiEIfZ_p3kouf7vQkTQHnFiQhBdc4LHAAgOALXculhBAkDHLPrbcpoK1v4aApaJEALw_wcB';
+            $pro->website_link = 'https://dsdsadsa.com';
             $pro->slug = Str::of($pro->title, '-');
             $pro->save();
         }

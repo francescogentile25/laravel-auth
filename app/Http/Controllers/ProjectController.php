@@ -97,7 +97,7 @@ class ProjectController extends Controller
     {
         if ($project->trashed()) {
             $project->restore();
-            $request->session()->flash('message', 'Il post è stato ripristinato');
+            $request->session()->flash('message-restore', 'Il post è stato ripristinato');
         }
         return back();
     }
@@ -111,7 +111,7 @@ class ProjectController extends Controller
     {
         if ($project->trashed()) {
             $project->forceDelete(); // definitly elimination
-            $request->session()->flash('message', 'Il post è stato eliminato');
+            $request->session()->flash('message-delete', 'Il post è stato eliminato');
         } else {
             $project->delete(); //soft delete
         }

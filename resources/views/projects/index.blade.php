@@ -1,8 +1,13 @@
 @extends('layouts.app')
 @section('content')
-    @if (request()->session()->exists('message'))
-        <div class="alert fixed alert-primary" role="alert">
-            {{ request()->session()->pull('message') }}
+    @if (request()->session()->exists('message-restore'))
+        <div class="alert fixed alert-success" role="alert">
+            {{ request()->session()->pull('message-restore') }}
+        </div>
+    @endif
+    @if (request()->session()->exists('message-delete'))
+        <div class="alert fixed alert-danger" role="alert">
+            {{ request()->session()->pull('message-delete') }}
         </div>
     @endif
 
@@ -16,7 +21,7 @@
                 @if (request('trashed'))
                     <a class="btn btn-sm btn-light" href="{{ route('projects.index') }}">Tutti i progetti</a>
                 @else
-                    <a class="btn btn-sm btn-light" href="{{ route('projects.index', ['trashed' => true]) }}">Cestino
+                    <a class="btn btn-sm btn-dark" href="{{ route('projects.index', ['trashed' => true]) }}">Cestino
                         ({{ $num_of_trashed }})</a>
                 @endif
                 <a class="btn btn-sm btn-primary" href="{{ route('projects.create') }}">Nuovo progetto</a>
@@ -56,8 +61,8 @@
                             @endif
                         </td>
                         <td>
-                            <div class="d-flex ">
-                                <a class="btn btn-sm btn-secondary" href="{{ route('projects.edit', $project) }}">Edit</a>
+                            <div class="d-flex gap-2">
+                                <a class="btn btn-sm btn-warning" href="{{ route('projects.edit', $project) }}">Edit</a>
                                 <form action="{{ route('projects.destroy', $project) }}" method="POST">
                                     @csrf
                                     @method('DELETE')

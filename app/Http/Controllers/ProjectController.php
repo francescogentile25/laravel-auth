@@ -107,10 +107,11 @@ class ProjectController extends Controller
      * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Project $project)
+    public function destroy(Project $project, Request $request)
     {
         if ($project->trashed()) {
             $project->forceDelete(); // definitly elimination
+            $request->session()->flash('message', 'Il post è stato eliminato');
         } else {
             $project->delete(); //soft delete
         }

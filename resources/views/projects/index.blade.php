@@ -1,10 +1,24 @@
 @extends('layouts.app')
 @section('content')
+    @if (request()->session()->exists('message'))
+        <div class="alert fixed alert-primary" role="alert">
+            {{ request()->session()->pull('message') }}
+        </div>
+    @endif
+
     <div class="container py-5">
         <div class="d-flex align-items-center">
-            <h1 class="me-auto">Tutti i ptogetti</h1>
+            <h1 class="me-auto">Tutti i progetti</h1>
 
             <div>
+            </div>
+            <div>
+                @if (request('trashed'))
+                    <a class="btn btn-sm btn-light" href="{{ route('projects.index') }}">Tutti i progetti</a>
+                @else
+                    <a class="btn btn-sm btn-light" href="{{ route('projects.index', ['trashed' => true]) }}">Cestino
+                        ({{ $num_of_trashed }})</a>
+                @endif
                 <a class="btn btn-sm btn-primary" href="{{ route('projects.create') }}">Nuovo progetto</a>
             </div>
         </div>
@@ -34,10 +48,12 @@
                         <td>{{ $project->description }}</td>
                         <td>{{ $project->website_link }}</td>
                         <td>{{ $project->slug }}</td>
-                        <td>{{ $project->created_at }}</td>
-                        <td>{{ $project->updated_at }}</td>
+                        <td>{{ $project->created_at->format('d/m/Y') }}</td>
+                        <td>{{ $project->updated_at->format('d/m/Y') }}</td>
                         <td>
-                            {{ $project->trashed() ? $project->deleted_at : '' }}
+                            @if ($project->trashed())
+                                {{ $project->deleted_at->diffForHumans(now()) }}
+                            @endif
                         </td>
                         <td>
                             <div class="d-flex ">
@@ -58,7 +74,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <th colspan="8">Nessun post trovato</th>
+                        <th colspan="8">Nessun progetto trovato</th>
                     </tr>
                 @endforelse
             </tbody>

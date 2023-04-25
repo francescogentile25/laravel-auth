@@ -15,11 +15,19 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::withTrashed()->get();
+        $trashed = $request->input('trashed');
 
-        return view('projects.index', compact('projects'));
+        if ($trashed) {
+            $projects = Project::onlyTrashed()->get();
+        } else {
+            $projects = Project::all();
+        }
+
+        // $projects = Project::withTrashed()->get();
+        $num_of_trashed = Project::onlyTrashed()->count();
+        return view('projects.index', compact('projects', 'num_of_trashed'));
     }
 
     /**
@@ -85,10 +93,11 @@ class ProjectController extends Controller
         $project->update($data);
         return to_route('projects.show', $project);
     }
-    public function restore(Project $project)
+    public function restore(Project $project, Request $request)
     {
         if ($project->trashed()) {
             $project->restore();
+            $request->session()->flash('message', 'Il post è stato ripristinato');
         }
         return back();
     }
@@ -105,6 +114,7 @@ class ProjectController extends Controller
         } else {
             $project->delete(); //soft delete
         }
-        return to_route('projects.index');
+        // return to_route('projects.index');
+        return back();
     }
 }

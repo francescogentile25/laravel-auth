@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ProjectController extends Controller
 {
@@ -15,7 +17,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::all();
+        $projects = Project::withTrashed()->get();
 
         return view('projects.index', compact('projects'));
     }
@@ -38,7 +40,11 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+        $data = $request->validated();
+        $data['slug'] = Str::slug($data['title']);
+        $project = Project::create($data);
+
+        return to_route('projects.show', $project);
     }
 
     /**
@@ -72,9 +78,20 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $data = $request->validated();
+        if ($data['title'] !== $project->title) {
+            $data['slug'] = Str::slug($data['title']);
+        }
+        $project->update($data);
+        return to_route('projects.show', $project);
     }
-
+    public function restore(Project $project)
+    {
+        if ($project->trashed()) {
+            $project->restore();
+        }
+        return back();
+    }
     /**
      * Remove the specified resource from storage.
      *
@@ -83,7 +100,11 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        $project->delete();
+        if ($project->trashed()) {
+            $project->forceDelete(); // definitly elimination
+        } else {
+            $project->delete(); //soft delete
+        }
         return to_route('projects.index');
     }
 }
